@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outschool - After-School Clubs for Kids</title>
+    <link rel="stylesheet" href="design.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <div class="navbar">
+                <div class="logo">AFTER SCHOOL</div>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search online classes and tutors">
+                <!-- search bar icon -->
+            </div>
+
+            <button class="cart-button" :disabled="cartItemCount === 0" v-on:click="showCheckout">
+                <span class="fas fa-cart-plus"></span> Checkout {{cartItemCount}}
+            </button>
+
+
+        </header>
+
+        <section class="club-section">
+            <!-- Displaying Site Name -->
+            <h1 v-text="sitename">{{sitename}}</h1>
+            <img src="images/stars.jpg" alt="Stars Image">
+
+            <!-- Displaying Club Details -->
+            <ul class="features">
+                <li v-html="details.detail_1"></li>
+                <li v-html="details.detail_2"></li>
+                <li v-html="details.detail_3"></li>
+            </ul>
+
+            <!-- Sort Dropdown -->
+            <div class="sort">
+                <span>Sort by:</span>
+                <select v-model="sortOption">
+                    <option value="subject">Subject</option>
+                    <option value="price">Price</option>
+                    <option value="location">Location</option>
+                    <option value="availableSpots">Availability</option>
+                </select>
+                <span>Order:</span>
+                <select v-model="sortOrder">
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+                <button @click="sortClasses">Sort</button>
+            </div>
+
+        </section>
+
+        <!-- Displaying Classes Section -->
+        <main class="classes-section" v-if="showClasses">
+
+            <div v-for="classItem in Classes" :key="classItem.id" class="class-card">
+                <img :src="classItem.image" :alt="classItem.subject" class="class-image" />
+
+                <div class="class-details">
+                    <h2>{{ classItem.subject }}</h2>
+                    <p>{{ classItem.description }}</p>
+                    <!-- <p>Rating:⭐{{ classItem.rating }}</p> -->
+
+                    <div>
+                        <button v-if="canEnroll(classItem) " @click=" enroll(classItem)">Add to Cart</button>
+                        <button disabled v-else>Full Class</button>
+
+                        <span v-if="classItem.availableSpots === 0">All Out!</span>
+                        <span v-else-if="classItem.availableSpots < 5">Only {{ classItem.availableSpots }} spots
+                            left!</span>
+                        <span v-else>Available</span>
+
+                        <!-- Ratings Display -->
+                        <div>
+                            <!-- Loop through the number of filled stars based on the rating -->
+                            <span v-for="n in Math.floor(classItem.rating)" :key="'filled-'+n">⭐</span>
+                            <!-- ★ -->
+                            <!-- Loop through the number of empty stars (5 - rating) -->
+                            <span v-for="n in (5 - Math.floor(classItem.rating))" :key="'empty-'+n"
+                                class="empty-star">☆</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Class Info Card -->
+                <div class="class-info-card">
+                    <div class="class-info">
+                        <span>Price: {{ classItem.price }}</span>
+                        <!-- <span>Availability: {{ classItem.availableSpots }}</span> -->
+                        <p>Available stock: {{classItem.availableSpots -cartCount(classItem.id) }}</p>
+                        <span>Location: {{ classItem.location }}</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+
+        <div v-else>
+            <div v-if="!orderSubmitted">
+                <h2>Checkout</h2>
+                <div class="class-card-section">
+                    <div v-for="item in cartItems" :key="item.id" class="class-card">
+                        <img :src="item.image" :alt="item.subject" class="class-image" />
+
+                        <div class="class-details">
+                            <h2>{{ item.subject }}</h2>
+                            <p>{{ item.description }}</p>
+                            <span>Price: {{ item.price }}</span> <br>
+                            <span>Location: {{ item.location }}</span> <br>
+                            <span>Available stock: {{ item.availableSpots - cartCount(item.id) }}</span>
+                        </div>
+
+                        <button @click="removeFromCart(item)">Remove</button>
+                    </div>
+                </div>
+
+                <div v-if="!cartItems.length">
+                    <p>Your cart is empty. Add some items to proceed to checkout.</p>
+                </div>
+
+                <div v-else>
+                    <button @click="submitForm">Place Order</button>
+                </div>
+            </div>
+
+
+            <p>
+                <strong>First Name:</strong>
+                <input v-model.trim="order.firstName">
+            </p>
+            <p>
+                <strong>Last Name:</strong>
+                <input v-model.trim="order.lastName">
+            </p>
+
+            <p>
+                <strong>Address:</strong>
+                <input v-model="order.address" />
+            </p>
+
+            <p>
+                <strong>City:</strong>
+                <input v-model="order.city" />
+            </p>
+
+            <p>
+                <strong>State:</strong>
+                <select v-model="order.state">
+                    <option disabled value="">State</option>
+                    <option v-for="(state,key) in states" v-bind:value="state">
+                        {{key}}
+                    </option>
+                    <option>AL</option>
+                    <option>AR</option>
+                    <option>CA</option>
+                    <option>NV</option>
+
+                </select>
+            </p>
+
+            <p>
+                <strong>Zip/Postal Code:</strong>
+                <input v-model.number="order.zip" type="number" />
+            </p>
+
+            <p><input type="checkbox" value="true" id="gift" v-model="order.gift" v-bind:true-value="order.sendGift"
+                    v-bind:false-value="order.dontSendGift">
+
+                <label for="gift">Ship As Gift?</label>
+            </p>
+
+            <p><input type="radio" value="Home" id="home" v-model="order.method">
+                <label for="home">Home</label>
+                <input type="radio" id="business" value="Business" v-model="order.method">
+                <label for="business">Business</label>
+            </p>
+
+            <!-- <button v-on:click="submitForm">Place Order</button> -->
+        
+
+        
+            <h2>Order Information</h2>
+            <p>First Name:{{order.firstName}}</p>
+            <p>Last Name:{{order.lastName}}</p>
+            <p>Address:{{order.address}}</p>
+            <p>City:{{order.city}}</p>
+            <p>Zip:{{order.zip}}</p>
+            <p>State: {{order.state}}</p>
+            <p>Gift?: {{order.gift}}</p>
+            <p>Method: {{order.method}}</p>
+        
+        </div>
+    </div>
+    </div>
+
+
+
+
+    <!-- Vue.js Logic -->
+    <script type="text/javascript">
+        // Vue.js instance
+        let webstore = new Vue({
+            el: '#app', // Mount point for Vue
+            data: {
+                showClasses: true, // Display classes section
+                sitename: 'After School Club For Kids', // Site name
+                sortOption: 'subject', // Default sort option
+                sortOrder: 'asc',
+                cart: [],
+                details: { // Club details object
+                    detail_1: "📹 Engaging <strong>live video chat classes</strong>",
+                    detail_2: "👩‍🏫 <strong>Vetted and passionate</strong> teachers",
+                    detail_3: "🚀 Build <strong>confidence through progress</strong>"
+                },
+                orderSubmitted: false,
+                states: {
+                    AL: 'Alabama',
+                    AR: 'Arizona',
+                    CA: 'California',
+                    NV: 'Nevada'
+                },
+                order: {
+                    firstName: '',
+                    lastName: '',
+                    address: '',
+                    city: '',
+                    zip: '',
+                    state: '',
+                    method: 'Home',
+                    gift: false,
+                    sendGift: 'Send as Gift',
+                    dontSendGift: 'Do not send as gift'
+                },
+                Classes: [ // Class data array
+                    {
+                        id: 1,
+                        subject: "Drawing Club ",
+                        image: "images/image.jpg",
+                        description: "In this 30-minute daily drawing club, students will learn to draw something cool by following the teacher's step-by-step live demonstration.",
+                        rating: 5.0,
+                        price: "AED 100",
+                        location: "JBR",
+                        availableSpots: 10
+                    },
+                    {
+                        id: 2,
+                        subject: "English Vocabulary Club",
+                        image: "images/image.jpg",
+                        description: "In this club, students will meet weekly to develop their English skills by engaging in conversation about a variety of fun, planned topics!",
+                        rating: 4.9,
+                        price: "AED 100",
+                        location: "JBR",
+                        availableSpots: 10
+                    },
+                    {
+                        id: 3,
+                        subject: "Math Club",
+                        image: "images/image.jpg",
+                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                        rating: 4.8,
+                        price: "AED 100",
+                        location: "JBR",
+                        availableSpots: 10
+                    },
+                    {
+                        id: 4,
+                        subject: "MUN Club",
+                        image: "images/image.jpg",
+                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                        rating: 4.8,
+                        price: "AED 100",
+                        location: "JBR",
+                        availableSpots: 10
+                    },
+                    {
+                        id: 5,
+                        subject: "Creative Writing Club",
+                        image: "images/image.jpg",
+                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                        rating: 4.8,
+                        price: "AED 100",
+                        location: "JBR",
+                        availableSpots: 10
+                    },
+                    {
+                        id: 6,
+                        subject: "Swimming Club",
+                        image: "images/image.jpg",
+                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                        rating: 4.8,
+                        price: "AED 100",
+                        location: "JBR",
+                        availableSpots: 10
+                    },
+                    {
+                        id: 7,
+                        subject: "Martial Arts Club",
+                        image: "images/image.jpg",
+                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                        rating: 4.8,
+                        price: "AED 100",
+                        location: "JBR",
+                        availableSpots: 10
+                    },
+                    {
+                        id: 8,
+                        subject: "Dance Club",
+                        image: "images/image.jpg",
+                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                        rating: 4.8,
+                        price: "AED 100",
+                        location: "JBR",
+                        availableSpots: 10
+                    },
+                    {
+                        id: 9,
+                        subject: "Basket Ball Club",
+                        image: "images/image.jpg",
+                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                        rating: 4.8,
+                        price: "AED 100",
+                        location: "JBR",
+                        availableSpots: 10
+                    },
+                    {
+                        id: 10,
+                        subject: "Football Club",
+                        image: "images/image.jpg",
+                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                        rating: 4.8,
+                        price: "AED 100",
+                        location: "JBR",
+                        availableSpots: 10
+                    },
+
+
+                ],
+
+            },
+            methods: {
+                // Check if user can enroll in class (based on available spots)
+                canEnroll(classItem) {
+                    return classItem.availableSpots > this.cartCount(classItem.id);
+                },
+                // Enroll the user into the class
+                enroll(classItem) {
+                    if (this.canEnroll(classItem)) {
+                        //classItem.availableSpots -= 1;
+                        alert(`Enrolled in ${classItem.subject}`);
+                        this.cart.push(classItem.id);
+                    }
+                },
+                // Sorting classes based on selected option
+                sortClasses() {
+                    const field = this.sortOption;
+                    const order = this.sortOrder;
+
+                    // Perform sorting
+                    this.Classes.sort((a, b) => {
+                        let valA = a[field];
+                        let valB = b[field];
+
+                        // Convert to numbers if sorting by price or availability
+                        if (field === 'price' || field === 'availableSpots') {
+                            valA = parseFloat(valA);
+                            valB = parseFloat(valB);
+                        }
+
+                        // Comparison logic
+                        if (valA < valB) return order === 'asc' ? -1 : 1;
+                        if (valA > valB) return order === 'asc' ? 1 : -1;
+                        return 0;
+                    });
+
+                },
+                cartCount(id) {
+                    let count = 0;
+                    for (let i = 0; i < this.cart.length; i++) {
+                        if (this.cart[i] === id) {
+                            count++;
+                        }
+                    }
+                    return count;
+                },
+
+
+                showCheckout() {
+                    this.showClasses = this.showClasses ? false : true;
+                },
+
+                // Remove an item from the cart
+                removeFromCart(item) {
+                    const index = this.cart.indexOf(item.id);
+                    if (index > -1) {
+                        this.cart.splice(index, 1);
+                    }
+                },
+
+                submitForm() {
+                    if (this.order.firstName && this.order.lastName && this.order.address) {
+                        this.orderSubmitted = true; // Mark the order as submitted
+                    } else {
+                        alert('Please fill in all required fields.');
+                    }
+                },
+
+            },
+            computed: {
+                cartItemCount() {
+                    return this.cart.length;
+                },
+
+                // Get items in the cart as objects
+                cartItems() {
+                    return this.Classes.filter(classItem => this.cart.includes(classItem.id));
+                },
+            }
+
+        });
+    </script>
+</body>
+
+</html>
