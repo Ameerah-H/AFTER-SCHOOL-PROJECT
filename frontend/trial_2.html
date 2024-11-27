@@ -187,9 +187,9 @@
             </p>
 
             <!-- <button v-on:click="submitForm">Place Order</button> -->
-        
 
-        
+
+
             <h2>Order Information</h2>
             <p>First Name:{{order.firstName}}</p>
             <p>Last Name:{{order.lastName}}</p>
@@ -199,7 +199,7 @@
             <p>State: {{order.state}}</p>
             <p>Gift?: {{order.gift}}</p>
             <p>Method: {{order.method}}</p>
-        
+
         </div>
     </div>
     </div>
@@ -242,113 +242,133 @@
                     sendGift: 'Send as Gift',
                     dontSendGift: 'Do not send as gift'
                 },
-                Classes: [ // Class data array
-                    {
-                        id: 1,
-                        subject: "Drawing Club ",
-                        image: "images/image.jpg",
-                        description: "In this 30-minute daily drawing club, students will learn to draw something cool by following the teacher's step-by-step live demonstration.",
-                        rating: 5.0,
-                        price: "AED 100",
-                        location: "JBR",
-                        availableSpots: 10
-                    },
-                    {
-                        id: 2,
-                        subject: "English Vocabulary Club",
-                        image: "images/image.jpg",
-                        description: "In this club, students will meet weekly to develop their English skills by engaging in conversation about a variety of fun, planned topics!",
-                        rating: 4.9,
-                        price: "AED 100",
-                        location: "JBR",
-                        availableSpots: 10
-                    },
-                    {
-                        id: 3,
-                        subject: "Math Club",
-                        image: "images/image.jpg",
-                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                        rating: 4.8,
-                        price: "AED 100",
-                        location: "JBR",
-                        availableSpots: 10
-                    },
-                    {
-                        id: 4,
-                        subject: "MUN Club",
-                        image: "images/image.jpg",
-                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                        rating: 4.8,
-                        price: "AED 100",
-                        location: "JBR",
-                        availableSpots: 10
-                    },
-                    {
-                        id: 5,
-                        subject: "Creative Writing Club",
-                        image: "images/image.jpg",
-                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                        rating: 4.8,
-                        price: "AED 100",
-                        location: "JBR",
-                        availableSpots: 10
-                    },
-                    {
-                        id: 6,
-                        subject: "Swimming Club",
-                        image: "images/image.jpg",
-                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                        rating: 4.8,
-                        price: "AED 100",
-                        location: "JBR",
-                        availableSpots: 10
-                    },
-                    {
-                        id: 7,
-                        subject: "Martial Arts Club",
-                        image: "images/image.jpg",
-                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                        rating: 4.8,
-                        price: "AED 100",
-                        location: "JBR",
-                        availableSpots: 10
-                    },
-                    {
-                        id: 8,
-                        subject: "Dance Club",
-                        image: "images/image.jpg",
-                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                        rating: 4.8,
-                        price: "AED 100",
-                        location: "JBR",
-                        availableSpots: 10
-                    },
-                    {
-                        id: 9,
-                        subject: "Basket Ball Club",
-                        image: "images/image.jpg",
-                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                        rating: 4.8,
-                        price: "AED 100",
-                        location: "JBR",
-                        availableSpots: 10
-                    },
-                    {
-                        id: 10,
-                        subject: "Football Club",
-                        image: "images/image.jpg",
-                        description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                        rating: 4.8,
-                        price: "AED 100",
-                        location: "JBR",
-                        availableSpots: 10
-                    },
+                Classes: []
+                // Classes: [ // Class data array
+                //     {
+                //         id: 1,
+                //         subject: "Drawing Club ",
+                //         image: "images/image.jpg",
+                //         description: "In this 30-minute daily drawing club, students will learn to draw something cool by following the teacher's step-by-step live demonstration.",
+                //         rating: 5.0,
+                //         price: "AED 100",
+                //         location: "JBR",
+                //         availableSpots: 10
+                //     },
+                //     {
+                //         id: 2,
+                //         subject: "English Vocabulary Club",
+                //         image: "images/image.jpg",
+                //         description: "In this club, students will meet weekly to develop their English skills by engaging in conversation about a variety of fun, planned topics!",
+                //         rating: 4.9,
+                //         price: "AED 100",
+                //         location: "JBR",
+                //         availableSpots: 10
+                //     },
+                //     {
+                //         id: 3,
+                //         subject: "Math Club",
+                //         image: "images/image.jpg",
+                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                //         rating: 4.8,
+                //         price: "AED 100",
+                //         location: "JBR",
+                //         availableSpots: 10
+                //     },
+                //     {
+                //         id: 4,
+                //         subject: "MUN Club",
+                //         image: "images/image.jpg",
+                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                //         rating: 4.8,
+                //         price: "AED 100",
+                //         location: "JBR",
+                //         availableSpots: 10
+                //     },
+                //     {
+                //         id: 5,
+                //         subject: "Creative Writing Club",
+                //         image: "images/image.jpg",
+                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                //         rating: 4.8,
+                //         price: "AED 100",
+                //         location: "JBR",
+                //         availableSpots: 10
+                //     },
+                //     {
+                //         id: 6,
+                //         subject: "Swimming Club",
+                //         image: "images/image.jpg",
+                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                //         rating: 4.8,
+                //         price: "AED 100",
+                //         location: "JBR",
+                //         availableSpots: 10
+                //     },
+                //     {
+                //         id: 7,
+                //         subject: "Martial Arts Club",
+                //         image: "images/image.jpg",
+                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                //         rating: 4.8,
+                //         price: "AED 100",
+                //         location: "JBR",
+                //         availableSpots: 10
+                //     },
+                //     {
+                //         id: 8,
+                //         subject: "Dance Club",
+                //         image: "images/image.jpg",
+                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                //         rating: 4.8,
+                //         price: "AED 100",
+                //         location: "JBR",
+                //         availableSpots: 10
+                //     },
+                //     {
+                //         id: 9,
+                //         subject: "Basket Ball Club",
+                //         image: "images/image.jpg",
+                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                //         rating: 4.8,
+                //         price: "AED 100",
+                //         location: "JBR",
+                //         availableSpots: 10
+                //     },
+                //     {
+                //         id: 10,
+                //         subject: "Football Club",
+                //         image: "images/image.jpg",
+                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
+                //         rating: 4.8,
+                //         price: "AED 100",
+                //         location: "JBR",
+                //         availableSpots: 10
+                //     },
 
 
-                ],
+                // ],
 
             },
+            created() {
+                    // Fetch the lessons data when the component is created
+                    fetch("http://localhost:3000/collection/lessons")
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            console.log('Fetched data:', data); // Log fetched data
+                            this.Classes = data; // Populate the Classes array
+                        })
+                        .catch((error) => {
+                            console.error("Error Fetching the data:", error); // Log errors
+                        });
+            
+            },
             methods: {
+
                 // Check if user can enroll in class (based on available spots)
                 canEnroll(classItem) {
                     return classItem.availableSpots > this.cartCount(classItem.id);
