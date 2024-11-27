@@ -32,7 +32,7 @@
         <section class="club-section">
             <!-- Displaying Site Name -->
             <h1 v-text="sitename">{{sitename}}</h1>
-            <img src="images/stars.jpg" alt="Stars Image">
+            <img src="images/image.jpg" alt="Stars Image">
 
             <!-- Displaying Club Details -->
             <ul class="features">
@@ -63,7 +63,7 @@
         <!-- Displaying Classes Section -->
         <main class="classes-section" v-if="showClasses">
 
-            <div v-for="classItem in Classes" :key="classItem.id" class="class-card">
+            <div v-for="classItem in Classes" :key="classItem._id" class="class-card">
                 <img :src="classItem.image" :alt="classItem.subject" class="class-image" />
 
                 <div class="class-details">
@@ -98,7 +98,7 @@
                     <div class="class-info">
                         <span>Price: {{ classItem.price }}</span>
                         <!-- <span>Availability: {{ classItem.availableSpots }}</span> -->
-                        <p>Available stock: {{classItem.availableSpots -cartCount(classItem.id) }}</p>
+                        <p>Available stock: {{classItem.availableSpots -cartCount(classItem._id) }}</p>
                         <span>Location: {{ classItem.location }}</span>
                     </div>
                 </div>
@@ -331,8 +331,17 @@
 
             },
             methods: {
+//fetch -post (order)
+            //     fetch("http://localhost:3000/collection/orders",{
+            //         method:"POST",
+            //         headers:{
+            //             "Content-Type":"application/json",
+            //         },
+            //         body: JSON.stringify(orderDate),
 
-                
+            //     })
+            // }
+
                 validateFirstName() {
                     const nameRegex = /^[a-zA-Z]+$/;
                     if (!this.order.firstName) {
@@ -366,14 +375,14 @@
 
                 // Check if user can enroll in class (based on available spots)
                 canEnroll(classItem) {
-                    return classItem.availableSpots > this.cartCount(classItem.id);
+                    return classItem.availableSpots > this.cartCount(classItem._id);
                 },
                 // Enroll the user into the class
                 enroll(classItem) {
                     if (this.canEnroll(classItem)) {
                         //classItem.availableSpots -= 1;
                         alert(`Enrolled in ${classItem.subject}`);
-                        this.cart.push(classItem.id);
+                        this.cart.push(classItem._id);
                     }
                 },
                 // Sorting classes based on selected option
@@ -441,7 +450,7 @@
 
                 // Get items in the cart as objects
                 cartItems() {
-                    return this.Classes.filter(classItem => this.cart.includes(classItem.id));
+                    return this.Classes.filter(classItem => this.cart.includes(classItem._id));
                 },
                 isFormValid() {
                     return (
