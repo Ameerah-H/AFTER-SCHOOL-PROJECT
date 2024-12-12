@@ -15,11 +15,16 @@
     <div id="app">
         <header>
             <div class="navbar">
-                <div class="logo">AFTER SCHOOL</div>
+                <div class="logo">
+                    <img src="/images/logo.png" alt="">
+                    <p>After School</p>
+                </div>
             </div>
             <div class="search-bar">
-                <input type="text" placeholder="Search online classes and tutors">
-                <!-- search bar icon -->
+                <input type="text" v-model="searchQuery" placeholder="Search online classes"
+                    v-on:input="onSearchInput" />
+                <i class="fas fa-search" v-on:click="searchClasses" style="cursor: pointer;"></i>
+                <p v-if="Classes.length === 0">No classes found for your search.</p>
             </div>
 
             <button class="cart-button" :disabled="cartItemCount === 0" v-on:click="showCheckout">
@@ -32,7 +37,7 @@
         <section class="club-section">
             <!-- Displaying Site Name -->
             <h1 v-text="sitename">{{sitename}}</h1>
-            <img src="images/image.jpg" alt="Stars Image">
+            <img src="http://localhost:3000/images/image.jpg" alt="Stars Image" class="starsImage">
 
             <!-- Displaying Club Details -->
             <ul class="features">
@@ -55,7 +60,7 @@
                     <option value="asc">Ascending</option>
                     <option value="desc">Descending</option>
                 </select>
-                <button @click="sortClasses">Sort</button>
+                <button v-on:click="sortClasses">Sort</button>
             </div>
 
         </section>
@@ -64,15 +69,15 @@
         <main class="classes-section" v-if="showClasses">
 
             <div v-for="classItem in Classes" :key="classItem._id" class="class-card">
-                <img :src="classItem.image" :alt="classItem.subject" class="class-image" />
-
+                
+                <img :src="`http://localhost:3000/${classItem.image}`" :alt="classItem.subject" class="class-image" />
                 <div class="class-details">
                     <h2>{{ classItem.subject }}</h2>
                     <p>{{ classItem.description }}</p>
-                    <!-- <p>Rating:⭐{{ classItem.rating }}</p> -->
+                    
 
                     <div>
-                        <button v-if="canEnroll(classItem) " @click=" enroll(classItem)">Add to Cart</button>
+                        <button v-if="canEnroll(classItem) " v-on:click=" enroll(classItem)">Add to Cart</button>
                         <button disabled v-else>Full Class</button>
 
                         <span v-if="classItem.availableSpots === 0">All Out!</span>
@@ -82,10 +87,7 @@
 
                         <!-- Ratings Display -->
                         <div>
-                            <!-- Loop through the number of filled stars based on the rating -->
                             <span v-for="n in Math.floor(classItem.rating)" :key="'filled-'+n">⭐</span>
-                            <!-- ★ -->
-                            <!-- Loop through the number of empty stars (5 - rating) -->
                             <span v-for="n in (5 - Math.floor(classItem.rating))" :key="'empty-'+n"
                                 class="empty-star">☆</span>
                         </div>
@@ -97,7 +99,6 @@
                 <div class="class-info-card">
                     <div class="class-info">
                         <span>Price: {{ classItem.price }}</span>
-                        <!-- <span>Availability: {{ classItem.availableSpots }}</span> -->
                         <p>Available stock: {{classItem.availableSpots -cartCount(classItem._id) }}</p>
                         <span>Location: {{ classItem.location }}</span>
                     </div>
@@ -106,32 +107,27 @@
         </main>
 
 
-        <div v-else>
+        <div v-else class="checkout-cart">
             <div v-if="!orderSubmitted">
                 <h2>Checkout</h2>
                 <div class="class-card-section">
-                    <div v-for="item in cartItems" :key="item.id" class="class-card">
-                        <img :src="item.image" :alt="item.subject" class="class-image" />
+                    <div v-for="item in cartItems" :key="item._id" class="class-card">
+                        <img :src="`http://localhost:3000/${item.image}`" :alt="item.subject" class="class-image" />
 
                         <div class="class-details">
                             <h2>{{ item.subject }}</h2>
                             <p>{{ item.description }}</p>
                             <span>Price: {{ item.price }}</span> <br>
                             <span>Location: {{ item.location }}</span> <br>
-                            <span>Available stock: {{ item.availableSpots - cartCount(item.id) }}</span>
+                            <span>Available stock: {{ item.availableSpots - cartCount(item._id) }}</span>
                         </div>
 
-                        <button @click="removeFromCart(item)">Remove</button>
+                        <button v-on:click="removeFromCart(item)">Remove</button>
                     </div>
                 </div>
 
-                <div v-if="!cartItems.length">
-                    <p>Your cart is empty. Add some items to proceed to checkout.</p>
-                </div>
-
-                <div v-else>
-                    <button @click="submitForm">Place Order</button>
-                </div>
+                
+                
             </div>
 
 
@@ -153,11 +149,9 @@
                 <span v-if="errors.phone" style="color: red">{{ errors.phone }}</span>
             </p>
 
-
-
-            <!-- <button v-on:click="submitForm">Place Order</button> -->
-
-
+            <div>
+                <button v-on:click="placeorder" :disabled="!isFormValid">Place Order</button>
+            </div>
 
             <h2>Order Information</h2>
             <p>First Name:{{order.firstName}}</p>
@@ -167,17 +161,14 @@
 
         </div>
     </div>
-    </div>
-
-
-
-
+</div>
     <!-- Vue.js Logic -->
     <script type="text/javascript">
         // Vue.js instance
         let webstore = new Vue({
             el: '#app', // Mount point for Vue
             data: {
+                searchQuery: '',
                 showClasses: true, // Display classes section
                 sitename: 'After School Club For Kids', // Site name
                 sortOption: 'subject', // Default sort option
@@ -189,12 +180,7 @@
                     detail_3: "🚀 Build <strong>confidence through progress</strong>"
                 },
                 orderSubmitted: false,
-                states: {
-                    AL: 'Alabama',
-                    AR: 'Arizona',
-                    CA: 'California',
-                    NV: 'Nevada'
-                },
+
                 order: {
                     firstName: '',
                     lastName: '',
@@ -205,111 +191,10 @@
                     lastName: '',
                     phone: ''
                 },
-                Classes: []
-                // Classes: [ // Class data array
-                //     {
-                //         id: 1,
-                //         subject: "Drawing Club ",
-                //         image: "images/image.jpg",
-                //         description: "In this 30-minute daily drawing club, students will learn to draw something cool by following the teacher's step-by-step live demonstration.",
-                //         rating: 5.0,
-                //         price: "AED 100",
-                //         location: "JBR",
-                //         availableSpots: 10
-                //     },
-                //     {
-                //         id: 2,
-                //         subject: "English Vocabulary Club",
-                //         image: "images/image.jpg",
-                //         description: "In this club, students will meet weekly to develop their English skills by engaging in conversation about a variety of fun, planned topics!",
-                //         rating: 4.9,
-                //         price: "AED 100",
-                //         location: "JBR",
-                //         availableSpots: 10
-                //     },
-                //     {
-                //         id: 3,
-                //         subject: "Math Club",
-                //         image: "images/image.jpg",
-                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                //         rating: 4.8,
-                //         price: "AED 100",
-                //         location: "JBR",
-                //         availableSpots: 10
-                //     },
-                //     {
-                //         id: 4,
-                //         subject: "MUN Club",
-                //         image: "images/image.jpg",
-                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                //         rating: 4.8,
-                //         price: "AED 100",
-                //         location: "JBR",
-                //         availableSpots: 10
-                //     },
-                //     {
-                //         id: 5,
-                //         subject: "Creative Writing Club",
-                //         image: "images/image.jpg",
-                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                //         rating: 4.8,
-                //         price: "AED 100",
-                //         location: "JBR",
-                //         availableSpots: 10
-                //     },
-                //     {
-                //         id: 6,
-                //         subject: "Swimming Club",
-                //         image: "images/image.jpg",
-                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                //         rating: 4.8,
-                //         price: "AED 100",
-                //         location: "JBR",
-                //         availableSpots: 10
-                //     },
-                //     {
-                //         id: 7,
-                //         subject: "Martial Arts Club",
-                //         image: "images/image.jpg",
-                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                //         rating: 4.8,
-                //         price: "AED 100",
-                //         location: "JBR",
-                //         availableSpots: 10
-                //     },
-                //     {
-                //         id: 8,
-                //         subject: "Dance Club",
-                //         image: "images/image.jpg",
-                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                //         rating: 4.8,
-                //         price: "AED 100",
-                //         location: "JBR",
-                //         availableSpots: 10
-                //     },
-                //     {
-                //         id: 9,
-                //         subject: "Basket Ball Club",
-                //         image: "images/image.jpg",
-                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                //         rating: 4.8,
-                //         price: "AED 100",
-                //         location: "JBR",
-                //         availableSpots: 10
-                //     },
-                //     {
-                //         id: 10,
-                //         subject: "Football Club",
-                //         image: "images/image.jpg",
-                //         description: "Give your child the ultimate gaming experience with the Roblox adventure club. They can play, socialize, and make new friends.",
-                //         rating: 4.8,
-                //         price: "AED 100",
-                //         location: "JBR",
-                //         availableSpots: 10
-                //     },
+                Classes: [],
+                debounceTimer: null, // Timer for debounce
 
 
-                // ],
 
             },
             created() {
@@ -331,10 +216,8 @@
 
             },
             methods: {
-
-
                 validateFirstName() {
-                    const nameRegex = /^[a-zA-Z]+$/;
+                    const nameRegex = /^[a-zA-Z]+$/; 3
                     if (!this.order.firstName) {
                         this.errors.firstName = "First name is required.";
                     } else if (!nameRegex.test(this.order.firstName)) {
@@ -363,6 +246,143 @@
                         this.errors.phone = "";
                     }
                 },
+                placeorder() {
+                    this.validateFirstName();
+                    this.validateLastName();
+                    this.validatePhone();
+                    if (this.isFormValid) {
+                        alert("Form submitted successfully!");
+                    } else {
+                        alert("Please fix the errors before submitting.");
+                    }
+
+                    if (this.isFormValid) {
+                        const orderData = {
+                            firstName: this.order.firstName,
+                            lastName: this.order.lastName,
+                            phone: this.order.phone,
+                            cartItems: this.cartItems, // Include cart items in the order
+                        };
+
+                        fetch("http://localhost:3000/collection/checkout", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(orderData),
+                        })
+                            .then((response) => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then((data) => {
+                                this.orderSubmitted = true;
+
+                                // Update available spaces for each item in the cart
+                                this.cartItems.forEach((item) => {
+                                    const newAvailableSpots = item.availableSpots - this.cartCount(item._id);
+                                    this.updateAvailableSpaces(item._id, newAvailableSpots);
+                                    
+
+                                });
+
+                                this.cart = []; // Clear the cart after successful order
+
+                            })
+                            .catch((error) => {
+                                console.error("Error placing the order:", error);
+                                alert("There was an error placing your order. Please try again.");
+                            });
+                    } else {
+                        alert("Please fix the form errors before submitting the order.");
+                    }
+                },
+                updateAvailableSpaces(classId, availableSpots) {
+                    const updateData = { availableSpots };
+                    console.log("Class ID being sent:", classId);
+
+                    fetch(`http://localhost:3000/collection/lessons/${classId}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(updateData),
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error(`HTTP error! status: ${response.status} - ${text}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log("Update Response:", data);
+                            if (data.msg === "Update successful") {
+                                alert("Available spaces updated successfully.");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error updating available spaces:", error);
+                            alert("Error updating available spaces. Please try again.");
+                        });
+                },
+                
+                onSearchInput() {
+                    // Clear previous debounce timer
+                    clearTimeout(this.debounceTimer);
+
+                    // Debounce to delay search until user stops typing for 300ms
+                    this.debounceTimer = setTimeout(() => {
+                        this.searchClasses();
+                    }, 300);
+                },
+
+               
+
+                searchClasses() {
+                    if (!this.searchQuery.trim()) {
+                        alert('Please enter a search term');
+
+                        // Fetch all lessons again to reset to the full list
+                        fetch("http://localhost:3000/collection/lessons")
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Fetched all lessons:', data); // Log fetched data
+                                this.Classes = data; // Reset to all lessons
+                            })
+                            .catch(error => {
+                                console.error("Error fetching all lessons:", error);
+                                alert("There was an error fetching the lessons. Please try again.");
+                            });
+
+                        return;  // Exit the function early since the search term is empty
+                    }
+
+                    // If search query is valid, perform search
+                    fetch(`http://localhost:3000/collection/search?q=${this.searchQuery}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Search Results:', data); // Log search results
+                            this.Classes = data; // Update the Classes array with search results
+                        })
+                        .catch(error => {
+                            console.error('Error fetching search results:', error);
+                            alert('There was an error fetching search results. Please try again.');
+                        });
+                },
+
+
 
                 // Check if user can enroll in class (based on available spots)
                 canEnroll(classItem) {
@@ -399,10 +419,10 @@
                     });
 
                 },
-                cartCount(id) {
+                cartCount(_id) {
                     let count = 0;
                     for (let i = 0; i < this.cart.length; i++) {
-                        if (this.cart[i] === id) {
+                        if (this.cart[i] === _id) {
                             count++;
                         }
                     }
@@ -416,22 +436,13 @@
 
                 // Remove an item from the cart
                 removeFromCart(item) {
-                    const index = this.cart.indexOf(item.id);
+                    const index = this.cart.indexOf(item._id);
                     if (index > -1) {
                         this.cart.splice(index, 1);
                     }
                 },
 
-                submitForm() {
-                    this.validateFirstName();
-                    this.validateLastName();
-                    this.validatePhone();
-                    if (this.isFormValid) {
-                        alert("Form submitted successfully!");
-                    } else {
-                        alert("Please fix the errors before submitting.");
-                    }
-                },
+               
 
             },
             computed: {
@@ -457,6 +468,7 @@
 
         });
     </script>
+
 </body>
 
 </html>

@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900&display=swap');
+
+body {
+    font-family: "Nunito", sans-serif;
+    font-weight: 400;
+  }  
+
+  header {
+    display: flex;
+    background-color: #B8BEE0;
+    align-items: center;
+    border-radius: 5px;
+  }
+  
+img {
+    border-radius: 10px;
+  }
+input{
+    font-family: "Nunito", sans-serif;
+    border-radius: 5px;
+    border:none;
+    width: 100%;
+}
+.search-bar {
+    border-radius: 5px;
+    background-color: white;
+    width: 250px;
+    height: 25px;
+    margin-left: 950px;
+    padding: 5px;
+    font: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    
+
+}
+.search-bar p{
+    font-family: "Nunito", sans-serif;
+    font: 20px;
+    margin-top: 140px; /* Adjusts spacing below the search bar */
+    
+}
+
+.starsImage {
+    width: 100%;     
+    height: 300px;     
+    object-fit: cover; 
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
+}
+
+.logo img {
+    height: 40px;
+}
+
+.logo p {
+    font-size: 20px;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.sort {
+    border-radius: 5px;
+    background-color: #BEE3DB;
+    height: 30px;
+    align-items: center;
+    padding: 5px;
+    font-size: 20px;
+    padding-left: 550px;
+}
+
+.sort select {
+    border: none;
+    font-size: 15px;
+    border-radius: 5px;
+    height: 20px;
+}
+
+
+button {
+    background-color: #BEE3DB;
+    font-family: "Nunito", sans-serif;
+    border: none;              
+    border-radius: 5px;       
+    cursor: pointer;      
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 5px;
+}
+
+  .class-image {
+    width: 300px;     
+    height: 200px;     
+    object-fit: cover; 
+}
+
+.cart-button {
+    margin-left: 10px;
+    height: 35px;
+    padding: 5px;      
+
+}
+.checkout-cart strong {
+    width: 120px; 
+    /* Fixed width for alignment */
+    margin-right: 10px;
+    text-align: right;
+}
+
+/* Input fields */
+.checkout-cart input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid black;
+    border-radius: 6px;
+    font-size: 15px;
+    min-width: 100px;
+    max-width: 800px;
+}
+/* Error messages */
+.checkout-cart span {
+    margin-left: 10px;
+    font-size: 12px;
+}
+
+.classes-section {
+    width: auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+.class-card {
+    background-color: #FAF9F9;
+    border: 1px solid black;
+    margin: 20px;
+    width: 300px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.class-card-section {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+  
