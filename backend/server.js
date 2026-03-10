@@ -6,7 +6,14 @@ app.use(express.json())
 const MongoClient = require('mongodb').MongoClient;
 let db;
 MongoClient.connect('mongodb+srv://ameeraharis369:pac30nov@cluster0.kyxtfvq.mongodb.net', (err, client) => {
-    db = client.db('webstore')
+     if (err) {
+        console.log("Database connection failed:", err)
+        return
+    }
+
+    db = client.db("webstore")
+    console.log("MongoDB connected")
+    
 })
 //CORS MIDDLEWARE
 app.use((req, res, next) => {
