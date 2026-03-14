@@ -199,7 +199,7 @@
             },
             created() {
                 // Fetch the lessons data when the component is created
-                fetch("http://localhost:3000/collection/lessons")
+                fetch("https://backend-3f57.onrender.com/collection/lessons")
                     .then((response) => {
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
@@ -264,7 +264,7 @@
                             cartItems: this.cartItems, // Include cart items in the order
                         };
 
-                        fetch("http://localhost:3000/collection/checkout", {
+                        fetch("https://backend-3f57.onrender.com/collection/checkout", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
@@ -303,7 +303,7 @@
                     const updateData = { availableSpots };
                     console.log("Class ID being sent:", classId);
 
-                    fetch(`http://localhost:3000/collection/lessons/${classId}`, {
+                    fetch(`https://backend-3f57.onrender.com/collection/lessons/${classId}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(updateData),
@@ -345,7 +345,7 @@
                         alert('Please enter a search term');
 
                         // Fetch all lessons again to reset to the full list
-                        fetch("http://localhost:3000/collection/lessons")
+                        fetch("https://backend-3f57.onrender.com/collection/lessons")
                             .then(response => {
                                 if (!response.ok) {
                                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -365,7 +365,7 @@
                     }
 
                     // If search query is valid, perform search
-                    fetch(`http://localhost:3000/collection/search?q=${this.searchQuery}`)
+                    fetch(`https://backend-3f57.onrender.com/collection/search?q=${this.searchQuery}`)
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error(`HTTP error! status: ${response.status}`);
