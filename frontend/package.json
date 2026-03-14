@@ -11,11 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@vue/cli-service": "^5.0.9",
     "express": "^4.21.1",
     "mongodb": "^3.6.3",
-    "@vue/cli-service": "^5.0.9"
-  },
-  "devDependencies": {
-    "@vue/cli-service": "^5.0.9"
+    "vue-template-compiler": "^2.7.16"
   }
 }
